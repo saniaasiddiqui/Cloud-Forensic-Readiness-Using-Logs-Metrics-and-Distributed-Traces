@@ -1,5 +1,6 @@
 import time
 import uuid
+import httpx
 from fastapi import FastAPI, HTTPException, Query, Request
 from app.common.logging import get_logger
 from app.common.tracing import setup_tracing
@@ -36,6 +37,25 @@ async def process_payment(
             
         if fail == "error":
             logger.error("Injecting internal error", **log_context)
+            
+            # --- NAYA CODE: Forensic Backend ko incident bhejein ---
+            current_span = trace.get_current_span()
+            trace_id = format(current_span.get_span_context().trace_id, '032x') if current_span else "unknown"
+            
+            try:
+                async with httpx.AsyncClient() as client:
+                    # Port 8002 par chal rahe Forensic Backend ko call
+                    await client.post("http://localhost:8002/incidents", json={
+                        "incident_id": f"INC-{transaction_id[:8]}",
+                        "trace_id": trace_id,
+                        "service_name": "payment_service",
+                        "severity": "HIGH",
+                        "error_message": "Simulated internal payment failure"
+                    }, timeout=5.0)
+            except Exception as e:
+                logger.error(f"Failed to send to forensic backend: {e}")
+            # --------------------------------------------------------
+            
             raise HTTPException(status_code=500, detail="Simulated internal payment failure")
 
         time.sleep(0.1) 

@@ -1,0 +1,8 @@
+{
+    "error_message": "Simulated internal payment failure",
+    "incident_id": "INC-ab0db6f6",
+    "service_name": "payment_service",
+    "severity": "LOW",
+    "timestamp": "2026-10-24T08:59:46.584381",
+    "trace_id": "e233fb3293323017e7a17a6f749071ec"
+}
