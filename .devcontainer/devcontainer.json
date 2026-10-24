@@ -1,6 +1,6 @@
 {
   "name": "Cloud Forensic Readiness",
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {
       "enableNonRootDocker": "true"
@@ -9,9 +9,12 @@
       "version": "latest",
       "helm": "latest",
       "minikube": "latest"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
     }
   },
-  "postCreateCommand": "minikube start --driver=docker --cpus=4 --memory=8192",
+  "postCreateCommand": "echo 'Environment ready. Run minikube start manually.'",
   "forwardPorts": [3000, 8000, 8001, 9090, 3100, 3200],
   "customizations": {
     "vscode": {
