@@ -1,6 +1,7 @@
 import json
 import logging
 import sys
+from opentelemetry import trace
 
 class JsonFormatter(logging.Formatter):
     def format(self, record):
@@ -10,7 +11,13 @@ class JsonFormatter(logging.Formatter):
             "message": record.getMessage(),
             "logger": record.name,
         }
-        # Python logging uses 'extra' dictionary
+        
+        # Automatically get trace_id from OpenTelemetry
+        span = trace.get_current_span()
+        if span.get_span_context().is_valid:
+            log_record["trace_id"] = format(span.get_span_context().trace_id, '032x')
+            log_record["span_id"] = format(span.get_span_context().span_id, '016x')
+        
         if hasattr(record, "extra_fields"):
             log_record.update(record.extra_fields)
             
