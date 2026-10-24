@@ -12,19 +12,15 @@ class JsonFormatter(logging.Formatter):
             "logger": record.name,
         }
         
-        # Automatically get trace_id from OpenTelemetry
-        span = trace.get_current_span()
-        if span.get_span_context().is_valid:
-            log_record["trace_id"] = format(span.get_span_context().trace_id, '032x')
-            log_record["span_id"] = format(span.get_span_context().span_id, '016x')
+        # OpenTelemetry se current span nikalne ki direct koshish
+        current_span = trace.get_current_span()
+        if current_span and current_span.get_span_context().is_valid:
+            log_record["trace_id"] = format(current_span.get_span_context().trace_id, '032x')
+            log_record["span_id"] = format(current_span.get_span_context().span_id, '016x')
         
         if hasattr(record, "extra_fields"):
             log_record.update(record.extra_fields)
             
-        redact_keys = ["password", "token", "secret", "credit_card"]
-        for key in redact_keys:
-            if key in log_record:
-                log_record[key] = "[REDACTED]"
         return json.dumps(log_record)
 
 def get_logger(service_name: str):
