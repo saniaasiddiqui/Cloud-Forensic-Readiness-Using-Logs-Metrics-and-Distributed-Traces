@@ -1,0 +1,24 @@
+{
+  "name": "Cloud Forensic Readiness",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "enableNonRootDocker": "true"
+    },
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+      "version": "latest",
+      "helm": "latest",
+      "minikube": "latest"
+    }
+  },
+  "postCreateCommand": "minikube start --driver=docker --cpus=4 --memory=8192",
+  "forwardPorts": [3000, 8000, 8001, 9090, 3100, 3200],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-kubernetes-tools.vscode-kubernetes-tools"
+      ]
+    }
+  }
+}
